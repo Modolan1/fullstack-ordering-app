@@ -8,7 +8,7 @@ const authStorageKey = "foodDeliveryToken"
 const StoreContextProvider = (props) =>{
 
     const [cartItems, setCartItems] = useState({})
-    const [token, setToken] = useState(() => localStorage.getItem(authStorageKey) || "")
+    const [token, setToken] = useState(() => localStorage.getItem(authStorageKey) || "https://backend-u9cv.onrender.com")
     const [currentUser, setCurrentUser] = useState(null)
     const [authLoading, setAuthLoading] = useState(Boolean(localStorage.getItem(authStorageKey)))
 
