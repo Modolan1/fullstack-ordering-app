@@ -51,7 +51,7 @@ const Login = () => {
             name='email'
             value={credentials.email}
             onChange={onChangeHandler}
-            placeholder='admin@fooddelivery.com'
+            placeholder='Enter your admin email'
             required
           />
         </label>
@@ -63,7 +63,7 @@ const Login = () => {
             name='password'
             value={credentials.password}
             onChange={onChangeHandler}
-            placeholder='Enter password'
+            placeholder='Enter your admin password'
             required
           />
         </label>
