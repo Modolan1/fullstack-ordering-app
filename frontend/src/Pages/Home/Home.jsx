@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import './Home.css'
 import Header from '../../Components/Header/Header'
 import EXploreMenu from '../../Components/ExploreMenu/EXploreMenu'
@@ -9,10 +9,17 @@ export const Home = () => {
   
   const [ category, setCategory] = useState("All");
 
+  const handleViewMenuClick = () => {
+    const menuSection = document.getElementById('explore-menu')
+    if (menuSection) {
+      menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
 
   return (
     <div>
-        <Header/>
+        <Header onViewMenuClick={handleViewMenuClick}/>
         <EXploreMenu category={category} setCategory={setCategory}/>
         <FoodDisplay category={category}/>
         <AppDownload/>

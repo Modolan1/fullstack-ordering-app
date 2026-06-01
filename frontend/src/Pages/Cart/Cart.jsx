@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react'
 import './Cart.css'
 import { StoreContext } from '../../Context/StoreContext'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { sanitizePromoCode, validatePromoCode } from '../../utils/inputSecurity'
 
-export const Cart = () => {
-  const { Food_List, cartItems, removeFromCart } = useContext(StoreContext)
+export const Cart = ({ setShowLogin }) => {
+  const navigate = useNavigate()
+  const { Food_List, cartItems, addtoCart, removeFromCart, token, currentUser } = useContext(StoreContext)
   const [promoCode, setPromoCode] = useState('')
   const [promoStatus, setPromoStatus] = useState({ type: '', message: '' })
 
@@ -41,6 +42,16 @@ export const Cart = () => {
     setPromoStatus({ type: 'info', message: 'Promo code validation passed, but promo support is not connected yet.' })
   }
 
+  const handleCheckoutClick = () => {
+    if (!token || !currentUser) {
+      sessionStorage.setItem('postLoginRedirect', '/place-order')
+      setShowLogin(true)
+      return
+    }
+
+    navigate('/place-order')
+  }
+
   return (
     <div className='cart'>
       <div className='cart-items'>
@@ -64,7 +75,25 @@ export const Cart = () => {
                   <img src={item.image} alt={item.name} />
                   <p>{item.name}</p>
                   <p>${item.price}</p>
-                  <p>{quantity}</p>
+                  <div className='cart-quantity-controls'>
+                    <button
+                      type='button'
+                      className='cart-qty-btn'
+                      onClick={() => removeFromCart(item._id)}
+                      aria-label={`Decrease ${item.name} quantity`}
+                    >
+                      -
+                    </button>
+                    <span>{quantity}</span>
+                    <button
+                      type='button'
+                      className='cart-qty-btn'
+                      onClick={() => addtoCart(item._id)}
+                      aria-label={`Increase ${item.name} quantity`}
+                    >
+                      +
+                    </button>
+                  </div>
                   <p>${item.price * quantity}</p>
                   <p onClick={() => removeFromCart(item._id)} className='cross'>x</p>
                 </div>
@@ -96,9 +125,7 @@ export const Cart = () => {
               <b>${total}</b>
             </div>
           </div>
-          <Link to='/place-order'>
-            <button disabled={subtotal === 0}>PROCEED TO CHECKOUT</button>
-          </Link>
+          <button type='button' disabled={subtotal === 0} onClick={handleCheckoutClick}>PROCEED TO CHECKOUT</button>
         </div>
 
         <div className='cart-promocode'>

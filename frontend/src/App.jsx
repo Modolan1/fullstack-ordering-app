@@ -17,8 +17,8 @@ export const App = () => {
       <Navbar setShowLogin={setShowLogin}/>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/cart' element={<Cart/>}/>
-        <Route path='/place-order' element={<PlaceOrder/>}/>
+        <Route path='/cart' element={<Cart setShowLogin={setShowLogin}/>}/>
+        <Route path='/place-order' element={<PlaceOrder setShowLogin={setShowLogin}/>}/>
       </Routes>
     </div>
     <Footer/>

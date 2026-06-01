@@ -29,7 +29,39 @@
 	/* padding-right: .3rem; */
 	color: rgb(224, 9, 9);
     font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
+
+.logo-cutlery {
+  position: relative;
+  width: 16px;
+  height: 18px;
+  display: inline-block;
+}
+
+.logo-cutlery::before,
+.logo-cutlery::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  height: 16px;
+  background: #e00909;
+  border-radius: 2px;
+}
+
+.logo-cutlery::before {
+  left: 3px;
+  box-shadow: -3px -9px 0 #e00909, 0 -9px 0 #e00909, 3px -9px 0 #e00909;
+}
+
+.logo-cutlery::after {
+  right: 3px;
+  transform: rotate(12deg);
+}
+
  .logo span{
 	color: rgb(224, 9, 9);
 
@@ -149,9 +181,48 @@
 .cart-popup-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   font-size: 14px;
   padding: 6px 0;
   border-bottom: 1px solid #f0f0f0;
+}
+
+.cart-popup-item-name {
+  flex: 1;
+  color: #333;
+}
+
+.cart-popup-item-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-popup .cart-qty-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  background: #fff;
+  color: #333;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.cart-popup .cart-qty-btn:hover {
+  background: #fff4f2;
+  border-color: tomato;
+}
+
+.cart-popup-item-qty {
+  min-width: 18px;
+  text-align: center;
+  font-weight: 600;
 }
 
 .cart-popup-total {
@@ -172,7 +243,7 @@
 
 @media (max-width: 1050px){
     .navbar .logo{
-        width: 140px;
+    width: auto;
     
     }
     .navbar-menu{
@@ -196,7 +267,7 @@
 @media (max-width: 900px) {
 
     .navbar .logo{
-  width: 120px;
+  width: auto;
     
   }
   .navbar-menu {

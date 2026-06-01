@@ -23,7 +23,7 @@ const cityPattern = /^[\p{L}][\p{L}\s'.-]*$/u
 const zipCodePattern = /^[A-Za-z0-9][A-Za-z0-9 -]*$/
 const paymentMethods = ['Cash On Delivery', 'Card']
 
-const PlaceOrder = () => {
+const PlaceOrder = ({ setShowLogin }) => {
   const navigate = useNavigate()
   const { Food_List, cartItems, clearCart, token, currentUser } = useContext(StoreContext)
   const [address, setAddress] = useState(initialAddress)
@@ -201,7 +201,9 @@ const PlaceOrder = () => {
     event.preventDefault()
 
     if (!token || !currentUser) {
-      setStatus({ type: 'error', message: 'Please sign in before placing an order.' })
+      sessionStorage.setItem('postLoginRedirect', '/place-order')
+      setShowLogin(true)
+      setStatus({ type: '', message: '' })
       return
     }
 
@@ -324,7 +326,6 @@ const PlaceOrder = () => {
       <div className='place-order-right'>
         <div className='cart-total'>
           <h2>Cart Totals</h2>
-          {!currentUser && <p className='place-order-status error'>Sign in with a registered account to place an order.</p>}
           <div>
             <div className='cart-total-details'>
               <p>Subtotal</p>

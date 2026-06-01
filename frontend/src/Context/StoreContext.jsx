@@ -23,7 +23,17 @@ const StoreContextProvider = (props) =>{
     }
 
     const removeFromCart = (itemId) =>{
-        setCartItems((prev)=>({...prev,[itemId]:prev[itemId]-1}))
+        setCartItems((prev) => {
+            const currentQty = prev[itemId] || 0
+
+            if (currentQty <= 1) {
+                const next = { ...prev }
+                delete next[itemId]
+                return next
+            }
+
+            return { ...prev, [itemId]: currentQty - 1 }
+        })
     }
 
     const clearCart = () => {
@@ -95,6 +105,24 @@ const StoreContextProvider = (props) =>{
         return result.user
     }
 
+    const startGuestSession = async () => {
+        const { response, result } = await apiFetch('/api/user/guest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Unable to start guest session.')
+        }
+
+        persistToken(result.token)
+        setCurrentUser(result.user)
+        setAuthLoading(false)
+        return result.user
+    }
+
     const fetchFoodList = async () => {
         try {
             const { response, result } = await apiFetch('/api/food/list')
@@ -141,6 +169,7 @@ const StoreContextProvider = (props) =>{
         currentUser,
         authLoading,
         authenticate,
+        startGuestSession,
         fetchCurrentUser,
         logout
 

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 export const Navbar = ({ setShowLogin }) => {
     const [menu, setMenu] = useState('home')
     const [showCartPopup, setShowCartPopup] = useState(false)
-  const { Food_List, cartItems, currentUser, logout } = useContext(StoreContext)
+  const { Food_List, cartItems, addtoCart, removeFromCart, currentUser, logout } = useContext(StoreContext)
 
     const cartList = useMemo(
       () => Food_List.filter((item) => (cartItems[item._id] || 0) > 0),
@@ -30,7 +30,10 @@ export const Navbar = ({ setShowLogin }) => {
     {showCartPopup && <div className='cart-popup-overlay' onClick={() => setShowCartPopup(false)}></div>}
     <div className='navbar'>
      {/* <img src={assets.food} className='logo-image' alt='search logo'/> */}
-        <a href='/' className='logo'>Afric<span>Food</span></a>
+        <a href='/' className='logo'>
+          <span className='logo-cutlery' aria-hidden='true'></span>
+          Afric<span>Food</span>
+        </a>
 
          <ul className='navbar-menu'>
                 <a href='/' onClick={() => setMenu('home')} className={menu === 'home' ? 'active' : ''}>Home</a>
@@ -53,8 +56,26 @@ export const Navbar = ({ setShowLogin }) => {
                         <div className='cart-popup-items'>
                           {cartList.map((item) => (
                             <div className='cart-popup-item' key={item._id}>
-                              <span>{item.name}</span>
-                              <span>x {cartItems[item._id]}</span>
+                              <span className='cart-popup-item-name'>{item.name}</span>
+                              <div className='cart-popup-item-controls'>
+                                <button
+                                  type='button'
+                                  className='cart-qty-btn'
+                                  onClick={() => removeFromCart(item._id)}
+                                  aria-label={`Decrease ${item.name} quantity`}
+                                >
+                                  -
+                                </button>
+                                <span className='cart-popup-item-qty'>{cartItems[item._id]}</span>
+                                <button
+                                  type='button'
+                                  className='cart-qty-btn'
+                                  onClick={() => addtoCart(item._id)}
+                                  aria-label={`Increase ${item.name} quantity`}
+                                >
+                                  +
+                                </button>
+                              </div>
                             </div>
                           ))}
                         </div>

@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import './LoginPopup.css'
 import { sanitizeEmail, sanitizePassword, sanitizeText, validateEmail, validateRequiredText } from '../../utils/inputSecurity'
 import { StoreContext } from '../../Context/StoreContext'
+import { useNavigate } from 'react-router-dom'
 
 const initialFormState = {
   name: '',
@@ -13,7 +14,8 @@ const initialFormState = {
 const namePattern = /^[\p{L}][\p{L}\s'.-]*$/u
 
 const LoginPopup = ({ setShowLogin }) => {
-  const { authenticate } = useContext(StoreContext)
+  const navigate = useNavigate()
+  const { authenticate, startGuestSession } = useContext(StoreContext)
   const [currentState, setCurrentState] = useState('Login')
   const [formData, setFormData] = useState(initialFormState)
   const [fieldErrors, setFieldErrors] = useState({})
@@ -102,9 +104,33 @@ const LoginPopup = ({ setShowLogin }) => {
         type: 'success',
         message: currentState === 'Sign Up' ? 'Account created successfully.' : 'Login successful.',
       })
+      const postLoginRedirect = sessionStorage.getItem('postLoginRedirect')
+      if (postLoginRedirect) {
+        sessionStorage.removeItem('postLoginRedirect')
+        navigate(postLoginRedirect)
+      }
       setShowLogin(false)
     } catch (error) {
       setStatus({ type: 'error', message: error.message || 'Authentication failed.' })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const onGuestContinue = async () => {
+    setSubmitting(true)
+    setStatus({ type: '', message: '' })
+
+    try {
+      await startGuestSession()
+      const postLoginRedirect = sessionStorage.getItem('postLoginRedirect')
+      if (postLoginRedirect) {
+        sessionStorage.removeItem('postLoginRedirect')
+        navigate(postLoginRedirect)
+      }
+      setShowLogin(false)
+    } catch (error) {
+      setStatus({ type: 'error', message: error.message || 'Unable to continue as guest.' })
     } finally {
       setSubmitting(false)
     }
@@ -131,9 +157,15 @@ const LoginPopup = ({ setShowLogin }) => {
           {fieldErrors.password && <p className='field-error'>{fieldErrors.password}</p>}
         </div>
 
-        <button type='submit' disabled={submitting}>
+        <button type='submit' className='login-popup-primary-btn' disabled={submitting}>
           {submitting ? 'Please wait...' : currentState === 'Sign Up' ? 'Create account' : 'Login'}
         </button>
+
+        {currentState === 'Login' && (
+          <button type='button' className='login-popup-guest-btn' onClick={onGuestContinue} disabled={submitting}>
+            Continue as Guest
+          </button>
+        )}
 
         <div className='login-popup-condition'>
           <input type='checkbox' name='acceptTerms' checked={formData.acceptTerms} onChange={onChangeHandler} aria-invalid={Boolean(fieldErrors.acceptTerms)} required />
