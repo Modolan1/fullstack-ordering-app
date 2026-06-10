@@ -8,7 +8,7 @@ export const blogPosts = [
       'How these essential ingredients contribute to the complex and bold flavours of Nigerian dishes. Nigerian cuisine is renowned for rich and layered taste profiles.',
     content: [
       'Spices and herbs are the backbone of Nigerian cooking. Ingredients like ginger, garlic, scent leaves, uziza and curry build flavour depth in soups, stews and rice dishes.',
-      'At Jollof Life, we blend ingredients in balanced layers so every spoonful has warmth, aroma and character. This is what gives our dishes their signature taste.',
+      'At Afric food, we blend ingredients in balanced layers so every spoonful has warmth, aroma and character. This is what gives our dishes their signature taste.',
       'When preparing meals, we focus on freshness and timing, allowing each spice to bloom properly before serving.'
     ],
     image: assets.ogbono,
