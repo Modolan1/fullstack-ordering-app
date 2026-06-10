@@ -15,6 +15,12 @@
     row-gap: 50px;
 }
 
+.food-display-empty {
+  margin-top: 18px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
 /* Responsive Styles */
 /* @media (max-width: 1024px) {
   .food-display-list {

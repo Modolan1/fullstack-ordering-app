@@ -133,7 +133,7 @@ const TrendChart = ({ title, subtitle, data, dataKey, color, valueFormatter }) =
 }
 
 const Reports = () => {
-  const { token } = useContext(AdminContext)
+  const { token, logout } = useContext(AdminContext)
   const [period, setPeriod] = useState('30d')
   const [appliedFilters, setAppliedFilters] = useState({ period: '30d', startDate: '', endDate: '' })
   const [customRange, setCustomRange] = useState({ startDate: '', endDate: '' })
@@ -142,6 +142,12 @@ const Reports = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    if (!token) {
+      setLoading(false)
+      setError('Admin session is missing. Please sign in again.')
+      return undefined
+    }
+
     let cancelled = false
 
     const loadReports = async () => {
@@ -161,6 +167,11 @@ const Reports = () => {
         const { response, result } = await apiFetchWithAuth(`/api/admin/reports?${params.toString()}`, token)
 
         if (!response.ok || !result.success) {
+          if (response.status === 401) {
+            logout()
+            throw new Error('Your admin session expired. Please sign in again.')
+          }
+
           throw new Error(result.message || 'Unable to load reports.')
         }
 
@@ -183,7 +194,7 @@ const Reports = () => {
     return () => {
       cancelled = true
     }
-  }, [appliedFilters, token])
+  }, [appliedFilters, token, logout])
 
   const overview = report?.overview || {}
   const canApplyCustomRange = Boolean(customRange.startDate && customRange.endDate)

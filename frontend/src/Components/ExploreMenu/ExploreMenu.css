@@ -43,6 +43,24 @@
     border-radius: 50%;
     transition: 0.2s;
 }
+
+.explore-menu-all-badge {
+  width: 6.8vw;
+  min-width: 72px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #e2e2e2;
+  background: #fff8f3;
+  color: #555;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  transition: 0.2s;
+}
+
 .explore-menu-list-item{
     margin-top: 10px;
     color: #747474;

@@ -31,7 +31,10 @@ export const apiFetch = async (path, options) => {
 export const apiFetchWithAuth = async (path, token, options = {}) => {
   const nextHeaders = {
     ...(options.headers || {}),
-    Authorization: `Bearer ${token}`,
+  }
+
+  if (token) {
+    nextHeaders.Authorization = `Bearer ${token}`
   }
 
   return apiFetch(path, {

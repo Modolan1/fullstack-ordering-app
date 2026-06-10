@@ -4,14 +4,137 @@ import { API_URL, apiFetch } from "../utils/api";
 
 export const StoreContext = createContext(null)
 const authStorageKey = "foodDeliveryToken"
+const cartStorageKey = "foodDeliveryCartItems"
+
+const readStoredCartItems = () => {
+    try {
+        const rawCartItems = localStorage.getItem(cartStorageKey)
+
+        if (!rawCartItems) {
+            return {}
+        }
+
+        const parsedCartItems = JSON.parse(rawCartItems)
+
+        if (!parsedCartItems || typeof parsedCartItems !== 'object' || Array.isArray(parsedCartItems)) {
+            return {}
+        }
+
+        const normalizedCartItems = {}
+
+        Object.entries(parsedCartItems).forEach(([itemId, quantity]) => {
+            const safeItemId = String(itemId || '').trim()
+            const safeQuantity = Number(quantity)
+
+            if (safeItemId && Number.isInteger(safeQuantity) && safeQuantity > 0) {
+                normalizedCartItems[safeItemId] = safeQuantity
+            }
+        })
+
+        return normalizedCartItems
+    } catch {
+        return {}
+    }
+}
+
+const buildRatingsIndex = (reviewList = []) => (
+    reviewList.reduce((accumulator, review) => {
+        const foodId = String(review?.foodId || '').trim()
+        const rating = Number(review?.rating) || 0
+
+        if (!foodId || !rating) {
+            return accumulator
+        }
+
+        if (!accumulator[foodId]) {
+            accumulator[foodId] = []
+        }
+
+        accumulator[foodId].push(rating)
+        return accumulator
+    }, {})
+)
 
 const StoreContextProvider = (props) =>{
 
     const [foodList, setFoodList] = useState(Food_List)
-    const [cartItems, setCartItems] = useState({})
+    const [cartItems, setCartItems] = useState(() => readStoredCartItems())
     const [token, setToken] = useState(() => localStorage.getItem(authStorageKey) || "")
     const [currentUser, setCurrentUser] = useState(null)
     const [authLoading, setAuthLoading] = useState(Boolean(localStorage.getItem(authStorageKey)))
+    const [reviews, setReviews] = useState([])
+    const [ratingsByFood, setRatingsByFood] = useState({})
+    const [searchQuery, setSearchQuery] = useState('')
+
+    const getFoodRating = (foodId) => {
+        const ratings = ratingsByFood[foodId] || []
+
+        if (!ratings.length) {
+            return 4
+        }
+
+        const total = ratings.reduce((sum, value) => sum + value, 0)
+        return Number((total / ratings.length).toFixed(1))
+    }
+
+    const addReview = ({ name, foodId, rating, comment }) => {
+        const safeName = String(name || '').trim() || 'Anonymous'
+        const safeFoodId = String(foodId || '').trim()
+        const safeComment = String(comment || '').trim()
+        const safeRating = Math.min(5, Math.max(1, Number(rating) || 1))
+
+        if (!safeFoodId) {
+            return
+        }
+
+        return apiFetch('/api/review/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: safeName,
+                foodId: safeFoodId,
+                rating: safeRating,
+                comment: safeComment,
+            }),
+        }).then(({ response, result }) => {
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Unable to save your review.')
+            }
+
+            const createdReview = result.data
+
+            if (!createdReview) {
+                throw new Error('Review saved but no review payload was returned.')
+            }
+
+            setReviews((current) => [createdReview, ...current])
+            setRatingsByFood((current) => ({
+                ...current,
+                [safeFoodId]: [...(current[safeFoodId] || []), safeRating],
+            }))
+
+            return createdReview
+        })
+    }
+
+    const fetchReviews = async () => {
+        try {
+            const { response, result } = await apiFetch('/api/review/list')
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Unable to load customer reviews.')
+            }
+
+            const fetchedReviews = Array.isArray(result.data) ? result.data : []
+            setReviews(fetchedReviews)
+            setRatingsByFood(buildRatingsIndex(fetchedReviews))
+            return fetchedReviews
+        } catch {
+            return []
+        }
+    }
 
     const addtoCart =(itemId) =>{
         if (!cartItems[itemId]) {
@@ -39,6 +162,10 @@ const StoreContextProvider = (props) =>{
     const clearCart = () => {
         setCartItems({})
     }
+
+    useEffect(() => {
+        localStorage.setItem(cartStorageKey, JSON.stringify(cartItems))
+    }, [cartItems])
 
     const persistToken = (nextToken) => {
         if (nextToken) {
@@ -156,6 +283,7 @@ const StoreContextProvider = (props) =>{
     useEffect(() => {
         fetchCurrentUser(token)
         fetchFoodList()
+        fetchReviews()
     }, [])
 
     const contextValue = {
@@ -171,7 +299,13 @@ const StoreContextProvider = (props) =>{
         authenticate,
         startGuestSession,
         fetchCurrentUser,
-        logout
+        logout,
+        reviews,
+        addReview,
+        getFoodRating,
+        fetchReviews,
+        searchQuery,
+        setSearchQuery
 
    
     }

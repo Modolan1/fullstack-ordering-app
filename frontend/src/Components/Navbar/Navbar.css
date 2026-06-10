@@ -5,6 +5,10 @@
   justify-content: space-between;
   align-items: center;
   transition: 0.3s;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
 }
 
 .navbar a {
@@ -62,10 +66,18 @@
   transform: rotate(12deg);
 }
 
- .logo span{
-	color: rgb(224, 9, 9);
-
+.logo-wordmark {
+  font-weight: 700;
 }
+
+.logo-afric {
+  color: #111111;
+}
+
+.logo-food {
+  color: rgb(224, 9, 9);
+}
+
 .logo-image {
      font-size: 2.1rem;
      font-weight: 800;
@@ -105,6 +117,61 @@
     display: flex;
     align-items: center;
     gap: 40px;
+}
+
+.navbar-search-wrap {
+  position: relative;
+}
+
+.navbar-search-toggle {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-search-toggle.active img {
+  filter: invert(25%) sepia(88%) saturate(1564%) hue-rotate(342deg) brightness(100%) contrast(98%);
+}
+
+.navbar-search-box {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 260px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.navbar-search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #111827;
+  background: transparent;
+}
+
+.navbar-search-clear {
+  border: none;
+  background: #f3f4f6;
+  color: #374151;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
 }
 
 .navbar-account {
@@ -278,6 +345,10 @@
   .navbar-right {
     gap: 20px;
   }
+
+  .navbar-search-box {
+    min-width: 220px;
+  }
   .navbar-account {
     gap: 8px;
   }
@@ -295,6 +366,12 @@
   .navbar-menu {
     display: none;
  
+  }
+
+  .navbar-search-box {
+    right: auto;
+    left: 0;
+    min-width: 220px;
   }
   
   

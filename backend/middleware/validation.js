@@ -301,6 +301,41 @@ const validateUpdateOrderStatus = (req, res, next) => {
     next()
 }
 
+const validateAddReview = (req, res, next) => {
+    const errors = []
+    const name = normalizeString(req.body.name) || 'Anonymous'
+    const foodId = normalizeString(req.body.foodId)
+    const comment = normalizeString(req.body.comment)
+    const ratingValue = Number(req.body.rating)
+
+    if (!validateFoodId(foodId)) {
+        addFieldError(errors, 'foodId', 'A valid food id is required.')
+    }
+
+    if (name.length < 2 || name.length > 80) {
+        addFieldError(errors, 'name', 'Name must be between 2 and 80 characters.')
+    }
+
+    if (!Number.isInteger(ratingValue) || ratingValue < 1 || ratingValue > 5) {
+        addFieldError(errors, 'rating', 'Rating must be an integer between 1 and 5.')
+    }
+
+    if (comment.length > 300) {
+        addFieldError(errors, 'comment', 'Review message must be 300 characters or fewer.')
+    }
+
+    if (errors.length > 0) {
+        return sendValidationErrors(res, errors)
+    }
+
+    req.body.name = name
+    req.body.foodId = foodId
+    req.body.rating = ratingValue
+    req.body.comment = comment
+
+    next()
+}
+
 export {
     foodCategories,
     orderStatuses,
@@ -310,6 +345,7 @@ export {
     validatePlaceOrder,
     validateRemoveFood,
     validateUpdateFood,
+    validateAddReview,
     validateVerifyOrderPayment,
     validateUpdateOrderStatus,
 }

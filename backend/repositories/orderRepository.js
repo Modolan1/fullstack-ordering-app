@@ -4,7 +4,7 @@ const createOrder = (payload) => orderModel.create(payload)
 
 const findOrderById = (orderId) => orderModel.findById(orderId)
 
-const updateOrderById = (orderId, update, options = { new: true }) => (
+const updateOrderById = (orderId, update, options = { returnDocument: 'after' }) => (
   orderModel.findByIdAndUpdate(orderId, update, options)
 )
 

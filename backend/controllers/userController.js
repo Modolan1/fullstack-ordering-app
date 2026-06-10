@@ -1,4 +1,5 @@
 import {
+  createGuestSession as createGuestSessionService,
   getCurrentUser as getCurrentUserService,
   loginUser as loginUserService,
   registerUser as registerUserService,
@@ -27,7 +28,30 @@ const loginUser = asyncHandler(async (req, res) => {
   })
 })
 
+const guestLogin = asyncHandler(async (req, res) => {
+  const result = await createGuestSessionService()
+
+  return res.json({
+    success: true,
+    message: 'Guest session started.',
+    token: result.token,
+    user: result.user,
+  })
+})
+
 const getCurrentUser = asyncHandler(async (req, res) => {
+  if (req.authUser?.isGuest) {
+    return res.json({
+      success: true,
+      user: {
+        id: req.authUser.id,
+        name: req.authUser.name || 'Guest',
+        email: '',
+        isGuest: true,
+      },
+    })
+  }
+
   const user = await getCurrentUserService(req.userId)
 
   return res.json({
@@ -36,4 +60,4 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   })
 })
 
-export { getCurrentUser, loginUser, registerUser }
+export { getCurrentUser, guestLogin, loginUser, registerUser }

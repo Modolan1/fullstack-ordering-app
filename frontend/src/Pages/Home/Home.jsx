@@ -3,11 +3,11 @@ import './Home.css'
 import Header from '../../Components/Header/Header'
 import EXploreMenu from '../../Components/ExploreMenu/EXploreMenu'
 import FoodDisplay from '../../Components/FoodDisplay/FoodDisplay'
-import AppDownload from '../../Components/AppDownload'
+import CustomerReviews from '../../Components/CustomerReviews/CustomerReviews'
+import BlogSection from '../../Components/BlogSection/BlogSection'
 
 export const Home = () => {
-  
-  const [ category, setCategory] = useState("All");
+  const [ category, setCategory] = useState('All')
 
   const handleViewMenuClick = () => {
     const menuSection = document.getElementById('explore-menu')
@@ -22,7 +22,8 @@ export const Home = () => {
         <Header onViewMenuClick={handleViewMenuClick}/>
         <EXploreMenu category={category} setCategory={setCategory}/>
         <FoodDisplay category={category}/>
-        <AppDownload/>
+        <CustomerReviews/>
+        <BlogSection/>
     </div>
   )
 }

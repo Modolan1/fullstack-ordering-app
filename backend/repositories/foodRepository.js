@@ -6,7 +6,7 @@ const findAllFoods = () => foodModel.find({})
 
 const findFoodById = (id) => foodModel.findById(id)
 
-const updateFoodById = (id, payload) => foodModel.findByIdAndUpdate(id, payload, { new: true })
+const updateFoodById = (id, payload) => foodModel.findByIdAndUpdate(id, payload, { returnDocument: 'after' })
 
 const deleteFoodById = (id) => foodModel.findByIdAndDelete(id)
 

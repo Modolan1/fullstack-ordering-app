@@ -10,6 +10,12 @@ const EXploreMenu = ({category, setCategory}) => {
             Choose from our diverse menu featuring a delectable array of dishes.
         </p>
         <div className='explore-menu-list'>
+            <div onClick={() => setCategory('All')} className='explore-menu-list-item'>
+                <div className={category === 'All' ? 'explore-menu-all-badge active' : 'explore-menu-all-badge'}>
+                    All
+                </div>
+                <p>all</p>
+            </div>
             {Menulist.map((item, index)=>{
                 return (
                 <div onClick={()=>setCategory(prev=>prev===item.menu_name? "All":item.menu_name)} key ={index} className='explore-menu-list-item'>

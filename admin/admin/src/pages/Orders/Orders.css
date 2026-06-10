@@ -4,50 +4,32 @@
 }
 
 .orders-placeholder {
-	padding: 24px;
-	background: #ffffff;
-	border: 1px solid #f0e4d7;
-	border-radius: 18px;
-	box-shadow: 0 14px 30px rgba(23, 23, 23, 0.05);
-}
-
-.orders-placeholder h2 {
-	margin: 0 0 10px;
-	color: #1f2937;
-}
-
-.orders-placeholder p {
-	margin: 0;
+	padding: 16px 0;
 	color: #6b7280;
-	line-height: 1.6;
 }
 
 .orders-list {
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
+	gap: 0;
 }
 
-.order-card {
+.order-entry {
 	display: grid;
-	grid-template-columns: 56px 1.6fr 0.8fr 220px;
+	grid-template-columns: 1.7fr 0.9fr 220px;
 	gap: 18px;
 	align-items: start;
-	padding: 20px;
-	background: #ffffff;
-	border: 1px solid #f0e4d7;
-	border-radius: 18px;
-	box-shadow: 0 14px 30px rgba(23, 23, 23, 0.05);
+	padding: 16px 0;
+	border-bottom: 1px solid #e5e7eb;
 }
 
-.order-card-icon {
-	width: 48px;
-	height: 48px;
-	object-fit: contain;
+.order-entry:first-child {
+	border-top: 1px solid #e5e7eb;
 }
 
-.order-card-body,
-.order-card-meta {
+.order-entry-main,
+.order-entry-meta,
+.order-entry-actions {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
@@ -57,7 +39,8 @@
 .order-customer,
 .order-address,
 .order-phone,
-.order-card-meta p,
+.order-entry-meta p,
+.order-entry-actions p,
 .orders-error {
 	margin: 0;
 }
@@ -79,22 +62,28 @@
 	line-height: 1.5;
 }
 
-.order-card-meta p {
+.order-entry-meta p {
 	display: flex;
 	justify-content: space-between;
 	gap: 12px;
 	color: #6b7280;
 }
 
-.order-card-meta strong {
+.order-entry-meta strong {
 	color: #111827;
 }
 
+.order-entry-actions p {
+	font-size: 13px;
+	font-weight: 600;
+	color: #6b7280;
+}
+
 .order-status-select {
-	padding: 12px 14px;
-	border: 1px solid #d6d3d1;
-	border-radius: 12px;
-	background: #fffdfb;
+	padding: 10px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	background: #fff;
 	font: inherit;
 	color: #111827;
 }
@@ -105,19 +94,25 @@
 }
 
 @media (max-width: 1000px) {
-	.order-card {
-		grid-template-columns: 56px 1fr;
+	.order-entry {
+		grid-template-columns: 1fr;
+		gap: 12px;
 	}
 
-	.order-card-meta,
-	.order-status-select {
-		grid-column: 2;
+	.order-entry-actions {
+		max-width: 260px;
 	}
 }
 
 @media (max-width: 600px) {
-	.order-card {
+	.order-entry {
 		padding: 16px;
-		gap: 14px;
+		border: 1px solid #e5e7eb;
+		border-radius: 10px;
+		margin-bottom: 10px;
+	}
+
+	.order-entry:first-child {
+		border-top: 1px solid #e5e7eb;
 	}
 }

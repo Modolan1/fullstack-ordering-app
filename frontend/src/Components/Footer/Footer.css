@@ -22,11 +22,70 @@
 
 }
 
+.footer-brand {
+    color: #e00909;
+    font-size: 24px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+}
+
+.footer-brand-cutlery {
+    position: relative;
+    width: 16px;
+    height: 18px;
+    display: inline-block;
+}
+
+.footer-brand-cutlery::before,
+.footer-brand-cutlery::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 3px;
+    height: 16px;
+    background: #e00909;
+    border-radius: 2px;
+}
+
+.footer-brand-cutlery::before {
+    left: 3px;
+    box-shadow: -3px -9px 0 #e00909, 0 -9px 0 #e00909, 3px -9px 0 #e00909;
+}
+
+.footer-brand-cutlery::after {
+    right: 3px;
+    transform: rotate(12deg);
+}
+
+.footer-brand-wordmark {
+    font-weight: 700;
+}
+
+.footer-brand-afric {
+    color: #ffffff;
+}
+
+.footer-brand-food {
+    color: #e00909;
+}
+
 .footer-content-left li , .footer-content-right li, .footer-content-center  li{
 list-style: none;
 margin-bottom: 10px;
 cursor: pointer;
 
+}
+
+.footer-menu-links a {
+    color: #d9d9d9;
+    transition: color 0.2s ease;
+}
+
+.footer-menu-links a:hover {
+    color: #ffffff;
 }
 
 .footer-content-left h2 , .footer-content-right h2, .footer-content-center  h2 {

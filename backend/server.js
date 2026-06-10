@@ -1,4 +1,6 @@
-import "dotenv/config"
+import dotenv from "dotenv"
+import path from "path"
+import { fileURLToPath } from "url"
 import express from "express"
 import cors from "cors"
 import { connectDB } from "./config/db.js"
@@ -7,7 +9,12 @@ import { handleStripeWebhook } from "./controllers/orderController.js"
 import adminRouter from "./routes/adminRoute.js"
 import foodRouter from "./routes/foodRoute.js"
 import orderRouter from "./routes/orderRoute.js"
+import reviewRouter from "./routes/reviewRoute.js"
 import userRouter from "./routes/userRoute.js"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+dotenv.config({ path: path.join(__dirname, ".env") })
 
 //app config
 const app = express()
@@ -53,6 +60,7 @@ app.use("/api/food", foodRouter)
 app.use("/api/admin", adminRouter)
 app.use("/api/user", userRouter)
 app.use("/api/order", orderRouter)
+app.use("/api/review", reviewRouter)
 app.use("/images", express.static('uploads'))
 
 app.get("/", (req, res) => {

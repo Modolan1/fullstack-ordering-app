@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import './Orders.css'
-import { assets } from '../../assets/assets'
 import { apiFetchWithAuth } from '../../utils/api'
 import { AdminContext } from '../../Context/AdminContext'
 
@@ -75,10 +74,8 @@ const Orders = () => {
       ) : (
         <div className='orders-list'>
           {orders.map((order) => (
-            <article className='order-card' key={order._id}>
-              <img src={assets.parcel_icon} alt='Order parcel' className='order-card-icon' />
-
-              <div className='order-card-body'>
+            <article className='order-entry' key={order._id}>
+              <div className='order-entry-main'>
                 <p className='order-items'>
                   {order.items.map((item) => `${item.name} x ${item.quantity}`).join(', ')}
                 </p>
@@ -92,7 +89,7 @@ const Orders = () => {
                 <p className='order-phone'>{order.address.phone}</p>
               </div>
 
-              <div className='order-card-meta'>
+              <div className='order-entry-meta'>
                 <p>
                   <span>Items</span>
                   <strong>{order.items.length}</strong>
@@ -107,18 +104,21 @@ const Orders = () => {
                 </p>
               </div>
 
-              <select
-                className='order-status-select'
-                value={order.status}
-                disabled={updatingOrderId === order._id}
-                onChange={(event) => updateOrderStatus(order._id, event.target.value)}
-              >
-                {orderStatuses.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
+              <div className='order-entry-actions'>
+                <p>Update status</p>
+                <select
+                  className='order-status-select'
+                  value={order.status}
+                  disabled={updatingOrderId === order._id}
+                  onChange={(event) => updateOrderStatus(order._id, event.target.value)}
+                >
+                  {orderStatuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </article>
           ))}
         </div>

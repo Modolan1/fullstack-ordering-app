@@ -4,9 +4,9 @@ import validator from 'validator'
 import { createUser, findUserByEmail, findUserById } from '../repositories/userRepository.js'
 import { AppError } from '../utils/appError.js'
 
-const jwtSecret = process.env.JWT_SECRET || 'development-secret-change-me'
+const getJwtSecret = () => process.env.JWT_SECRET || 'development-secret-change-me'
 
-const createToken = (userId) => jwt.sign({ id: userId }, jwtSecret, { expiresIn: '7d' })
+const createToken = (userId) => jwt.sign({ id: userId }, getJwtSecret(), { expiresIn: '7d' })
 
 const sanitizeAuthPayload = (body) => ({
   name: String(body.name || '').trim(),
@@ -91,6 +91,28 @@ const loginUser = async (body) => {
   }
 }
 
+const createGuestSession = async () => {
+  const guestId = `guest_${Date.now()}`
+
+  return {
+    token: jwt.sign(
+      {
+        id: guestId,
+        isGuest: true,
+        name: 'Guest',
+      },
+      getJwtSecret(),
+      { expiresIn: '24h' },
+    ),
+    user: {
+      id: guestId,
+      name: 'Guest',
+      email: '',
+      isGuest: true,
+    },
+  }
+}
+
 const getCurrentUser = async (userId) => {
   const user = await findUserById(userId)
 
@@ -105,4 +127,4 @@ const getCurrentUser = async (userId) => {
   }
 }
 
-export { getCurrentUser, loginUser, registerUser }
+export { createGuestSession, getCurrentUser, loginUser, registerUser }

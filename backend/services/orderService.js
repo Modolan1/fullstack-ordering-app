@@ -6,11 +6,18 @@ import {
 } from '../repositories/orderRepository.js'
 import { AppError } from '../utils/appError.js'
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY
-const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '')
+const getStripeSecretKey = () =>
+  String(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_KEY || '').trim()
+
+const getStripeWebhookSecret = () =>
+  String(process.env.STRIPE_WEBHOOK_SECRET || '').trim()
+
+const getFrontendUrl = () =>
+  String(process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '')
 
 const getStripeClient = () => {
+  const stripeSecretKey = getStripeSecretKey()
+
   if (!stripeSecretKey) {
     throw new AppError('Stripe is not configured. Set STRIPE_SECRET_KEY in backend environment.', 500)
   }
@@ -32,10 +39,11 @@ const markOrderAsPaid = async (orderId, stripeSessionId, paymentIntentId) => {
     update.stripePaymentIntentId = paymentIntentId
   }
 
-  return updateOrderById(orderId, update, { new: true })
+  return updateOrderById(orderId, update, { returnDocument: 'after' })
 }
 
 const placeOrder = async ({ userId, items, address, paymentMethod }) => {
+  const frontendUrl = getFrontendUrl()
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const deliveryFee = subtotal === 0 ? 0 : 2
   const amount = subtotal + deliveryFee
@@ -85,7 +93,7 @@ const placeOrder = async ({ userId, items, address, paymentMethod }) => {
       },
     })
 
-    await updateOrderById(newOrder._id, { stripeSessionId: session.id }, { new: true })
+    await updateOrderById(newOrder._id, { stripeSessionId: session.id }, { returnDocument: 'after' })
 
     return {
       order: newOrder,
@@ -125,6 +133,8 @@ const verifyOrderPayment = async ({ orderId, sessionId }) => {
 }
 
 const handleStripeWebhook = async ({ signature, payload }) => {
+  const stripeWebhookSecret = getStripeWebhookSecret()
+
   if (!stripeWebhookSecret) {
     throw new AppError('Stripe webhook secret is not configured.', 500)
   }
@@ -155,7 +165,7 @@ const handleStripeWebhook = async ({ signature, payload }) => {
 const listOrders = async () => findAllOrders()
 
 const updateOrderStatus = async ({ orderId, status }) => {
-  const updatedOrder = await updateOrderById(orderId, { status }, { new: true })
+  const updatedOrder = await updateOrderById(orderId, { status }, { returnDocument: 'after' })
 
   if (!updatedOrder) {
     throw new AppError('Order not found.', 404)
