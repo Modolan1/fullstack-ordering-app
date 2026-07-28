@@ -8,6 +8,8 @@ import BlogDetail from './Pages/BlogDetail/BlogDetail'
 import ContactSection from './Components/ContactSection/ContactSection'
 import Footer from './Components/Footer/Footer'
 import LoginPopup from './Components/LoginPopup/LoginPopup'
+import PWAInstallPrompt from './Components/PWAInstallPrompt/PWAInstallPrompt'
+import MobileQuickAccess from './Components/MobileQuickAccess/MobileQuickAccess'
 
 export const App = () => {
   const [showLogin, setShowLogin] = useState(false)
@@ -17,12 +19,14 @@ export const App = () => {
     {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
     <div className='app'>
       <Navbar setShowLogin={setShowLogin}/>
+      <PWAInstallPrompt/>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/blog/:slug' element={<BlogDetail/>}/>
         <Route path='/cart' element={<Cart setShowLogin={setShowLogin}/>}/>
         <Route path='/place-order' element={<PlaceOrder setShowLogin={setShowLogin}/>}/>
       </Routes>
+      <MobileQuickAccess/>
       <ContactSection/>
     </div>
     <Footer/>

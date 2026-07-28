@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import './Navbar.css'
 import { assets } from '../../assets/assets'
 import { StoreContext } from '../../Context/StoreContext'
@@ -8,6 +8,8 @@ export const Navbar = ({ setShowLogin }) => {
     const [menu, setMenu] = useState('home')
     const [showCartPopup, setShowCartPopup] = useState(false)
     const [showSearchBox, setShowSearchBox] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const navbarRef = useRef(null)
   const { Food_List, cartItems, addtoCart, removeFromCart, currentUser, logout, searchQuery, setSearchQuery } = useContext(StoreContext)
 
     const cartList = useMemo(
@@ -25,11 +27,44 @@ export const Navbar = ({ setShowLogin }) => {
       [cartList, cartItems]
     )
 
+    const handleMenuSelect = (selectedMenu) => {
+      setMenu(selectedMenu)
+      setShowMobileMenu(false)
+    }
+
+    useEffect(() => {
+      const handlePointerOutside = (event) => {
+        if (!showMobileMenu || !navbarRef.current) {
+          return
+        }
+
+        if (!navbarRef.current.contains(event.target)) {
+          setShowMobileMenu(false)
+        }
+      }
+
+      const handleEscapeKey = (event) => {
+        if (event.key === 'Escape') {
+          setShowMobileMenu(false)
+        }
+      }
+
+      document.addEventListener('mousedown', handlePointerOutside)
+      document.addEventListener('touchstart', handlePointerOutside)
+      document.addEventListener('keydown', handleEscapeKey)
+
+      return () => {
+        document.removeEventListener('mousedown', handlePointerOutside)
+        document.removeEventListener('touchstart', handlePointerOutside)
+        document.removeEventListener('keydown', handleEscapeKey)
+      }
+    }, [showMobileMenu])
+
 
   return (
     <>
     {showCartPopup && <div className='cart-popup-overlay' onClick={() => setShowCartPopup(false)}></div>}
-    <div className='navbar'>
+    <div className='navbar' ref={navbarRef}>
      {/* <img src={assets.food} className='logo-image' alt='search logo'/> */}
         <a href='/' className='logo'>
           <span className='logo-cutlery' aria-hidden='true'></span>
@@ -38,12 +73,25 @@ export const Navbar = ({ setShowLogin }) => {
           </span>
         </a>
 
-         <ul className='navbar-menu'>
-                <a href='/' onClick={() => setMenu('home')} className={menu === 'home' ? 'active' : ''}>Home</a>
-            <a href='/#explore-menu' onClick={() => setMenu('menu')} className={menu === 'menu' ? 'active' : ''}>Menu</a>
-          <a href='/#customer-reviews' onClick={() => setMenu('review')} className={menu === 'review' ? 'active' : ''}>Review</a>
-            <a href='/#latest-blog' onClick={() => setMenu('blog')} className={menu === 'blog' ? 'active' : ''}>Blog</a>
-              <a href='/#contact-us' onClick={() => setMenu('contact-us')} className={menu === 'contact-us' ? 'active' : ''}>Contact us</a>
+        <button
+          type='button'
+          className={`navbar-mobile-toggle ${showMobileMenu ? 'open' : ''}`}
+          onClick={() => setShowMobileMenu((prev) => !prev)}
+          aria-label='Toggle navigation menu'
+          aria-controls='navbar-mobile-menu'
+          aria-expanded={showMobileMenu}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+         <ul id='navbar-mobile-menu' className={`navbar-menu ${showMobileMenu ? 'mobile-open' : ''}`}>
+                <a href='/' onClick={() => handleMenuSelect('home')} className={menu === 'home' ? 'active' : ''}>Home</a>
+            <a href='/#explore-menu' onClick={() => handleMenuSelect('menu')} className={menu === 'menu' ? 'active' : ''}>Menu</a>
+          <a href='/#customer-reviews' onClick={() => handleMenuSelect('review')} className={menu === 'review' ? 'active' : ''}>Review</a>
+            <a href='/#latest-blog' onClick={() => handleMenuSelect('blog')} className={menu === 'blog' ? 'active' : ''}>Blog</a>
+              <a href='/#contact-us' onClick={() => handleMenuSelect('contact-us')} className={menu === 'contact-us' ? 'active' : ''}>Contact us</a>
             </ul>
             <div className='navbar-right'>
                 <div className='navbar-search-wrap'>

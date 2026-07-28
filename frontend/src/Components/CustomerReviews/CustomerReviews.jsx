@@ -70,8 +70,8 @@ const CustomerReviews = () => {
           required
         >
           <option value=''>Select menu item</option>
-          {Food_List.map((item) => (
-            <option key={item._id} value={item._id}>
+          {Food_List.map((item, index) => (
+            <option key={`${item._id || 'food'}-${index}`} value={item._id}>
               {item.name}
             </option>
           ))}
